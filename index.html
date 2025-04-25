@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Questions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .question-btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .question-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .page-info {
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .questions-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .column {
+            width: 48%;
+        }
+
+        @media (max-width: 768px) {
+            .question-btn {
+                font-size: 14px;
+                padding: 12px;
+            }
+
+            .pagination button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .questions-container {
+                flex-direction: column;
+            }
+
+            .column {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .question-btn {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .pagination button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-info" id="page-info"></div>
+
+    <div class="questions-container" id="questions-container"></div>
+
+    <div class="pagination">
+        <button onclick="prevPage()">Previous</button>
+        <button onclick="nextPage()">Next</button>
+    </div>
+
+    <script>
+        const questions = [
+            { text: "Leap Year", link: "https://www.geeksforgeeks.org/problems/leap-year0943/1" },
+            { text: "Check Prime", link: "https://www.geeksforgeeks.org/problems/check-prime/0" },
+            { text: "Detect loop in linked list", link: "https://www.geeksforgeeks.org/problems/detect-loop-in-linked-list/1" },
+            { text: "Anagram", link: "https://www.geeksforgeeks.org/problems/anagram-1587115620/1" },
+            { text: "Isomorphic String", link: "https://www.geeksforgeeks.org/problems/isomorphic-strings-1587115620/0" },
+            { text: "Sparse Number", link: "https://www.geeksforgeeks.org/problems/number-is-sparse-or-not-1587115620/1" },
+            { text: "Kadane's Algorithm", link: "https://www.geeksforgeeks.org/problems/kadanes-algorithm-1587115620/0" },
+            { text: "Quick Sort", link: "https://www.geeksforgeeks.org/problems/quick-sort/1" },
+            { text: "Selection Sort", link: "https://www.geeksforgeeks.org/problems/selection-sort/1" },
+            { text: "Bubble Sort", link: "https://www.geeksforgeeks.org/problems/bubble-sort/1" },
+            { text: "Insertion Sort", link: "https://www.geeksforgeeks.org/problems/insertion-sort/1" },
+            { text: "Merge Sort", link: "https://www.geeksforgeeks.org/problems/merge-sort/1" },
+            { text: "Heap Sort", link: "https://www.geeksforgeeks.org/problems/heap-sort/0" },
+            { text: "Counting Sort", link: "https://www.geeksforgeeks.org/problems/counting-sort/1" },
+            { text: "Radix Sort", link: "https://www.geeksforgeeks.org/problems/radix-sort/1" },
+            { text: "Gray code to Binary", link: "https://www.geeksforgeeks.org/problems/gray-to-binary-equivalent-1587115620/1" },
+            { text: "Balanced Binary Tree", link: "https://www.geeksforgeeks.org/problems/check-for-balanced-tree/1" },
+            { text: "Binary Heap Tree", link: "https://www.geeksforgeeks.org/problems/is-binary-tree-heap/1" },
+            { text: "Linear Probing in Hashing", link: "https://www.geeksforgeeks.org/batch/cip-1/track/DSA-Foundation-Hashing/problem/linear-probing-in-hashing-1587115620" },
+            { text: "Quadratic Probing in Hashing", link: "https://www.geeksforgeeks.org/batch/cip-1/track/DSA-Foundation-Hashing/problem/quadratic-probing-in-hashing-1587115621" },
+            { text: "Kth Largest Element", link: "https://www.geeksforgeeks.org/problems/k-largest-elements4206/1" },
+            { text: "Kth Smallest Element", link: "https://www.geeksforgeeks.org/problems/kth-smallest-element5635/0?fbclid=IwAR0VtEd6UCYavGElxeeIGf7RvQellSEu962OOkN5YC3B7ta-euAMn7l1BAw" },
+            { text: "Maximize Toys", link: "https://www.geeksforgeeks.org/problems/maximize-toys0331/1" },
+            { text: "Square root of a number", link: "https://www.geeksforgeeks.org/problems/square-root/1" },
+            { text: "Majority Element", link: "https://www.geeksforgeeks.org/problems/majority-element-1587115620/0" },
+            { text: "Sort 0, 1, 2", link: "https://www.geeksforgeeks.org/problems/sort-an-array-of-0s-1s-and-2s4231/1" },
+            { text: "Insert a node in BST", link: "https://www.geeksforgeeks.org/problems/insert-a-node-in-a-bst/1" },
+            { text: "Delete a node in BST", link: "https://www.geeksforgeeks.org/problems/delete-a-node-from-bst/1" },
+            { text: "Check for BST", link: "https://www.geeksforgeeks.org/problems/check-for-bst/1" },
+            { text: "Lowest common ancestor in BST", link: "https://www.geeksforgeeks.org/problems/lowest-common-ancestor-in-a-bst/0?qa-rewrite=4151%2Freturn-an-array-of-all-the-anti-diagonals&show=4153" },
+            { text: "Vertical traversal of Binary Tree", link: "https://www.geeksforgeeks.org/problems/print-a-binary-tree-in-vertical-order/1" },
+            { text: "Bottom view of Binary Tree", link: "https://www.geeksforgeeks.org/problems/bottom-view-of-binary-tree/0" },
+            { text: "Level order traversal to BST", link: "https://www.geeksforgeeks.org/problems/convert-level-order-traversal-to-bst/1" },
+            { text: "Decimal to Binary", link: "https://www.geeksforgeeks.org/problems/decimal-to-binary-1587115620/1" },
+            { text: "Print 1 to N without loop", link: "https://www.geeksforgeeks.org/problems/print-1-to-n-without-using-loops3621/1" },
+            { text: "String rotation of each other", link: "https://www.geeksforgeeks.org/problems/check-if-strings-are-rotations-of-each-other-or-not-1587115620/1" },
+            { text: "Repeating character-First appearence leftmost", link: "https://www.geeksforgeeks.org/problems/repeating-character-first-appearance-leftmost/0" },
+            { text: "Panagram", link: "https://www.geeksforgeeks.org/problems/pangram-checking-1587115620/1" },
+            { text: "GCD", link: "https://www.geeksforgeeks.org/problems/gcd-of-two-numbers3459/1" },
+            { text: "Sort by absolute difference", link: "https://www.geeksforgeeks.org/problems/sort-by-absolute-difference-1587115621/0" },
+            { text: "Number of Pairs", link: "https://www.geeksforgeeks.org/problems/number-of-pairs-1587115620/1" },
+            { text: "Merge Three Sorted Arrays", link: "https://www.geeksforgeeks.org/problems/merge-three-sorted-arrays-1587115620/0" },
+            { text: "Nearly sorted", link: "https://www.geeksforgeeks.org/problems/nearly-sorted-1587115620/1" },
+        ];
+
+        const pageSize = 18;
+        let currentPage = 0;
+
+        function renderQuestions() {
+            const container = document.getElementById("questions-container");
+            const pageInfo = document.getElementById("page-info");
+            container.innerHTML = "";
+
+            const start = currentPage * pageSize;
+            const end = start + pageSize;
+            const currentQuestions = questions.slice(start, end);
+
+            const leftColumn = document.createElement("div");
+            leftColumn.className = "column";
+
+            const rightColumn = document.createElement("div");
+            rightColumn.className = "column";
+
+            currentQuestions.forEach((q, index) => {
+                const btn = document.createElement("button");
+                btn.className = "question-btn";
+                btn.innerText = q.text;
+                btn.onclick = () => window.open(q.link, "_blank");
+
+                if (index < 9) {
+                    leftColumn.appendChild(btn);
+                } else {
+                    rightColumn.appendChild(btn);
+                }
+            });
+
+            container.appendChild(leftColumn);
+            container.appendChild(rightColumn);
+
+            const totalPages = Math.ceil(questions.length / pageSize);
+            pageInfo.innerText = `Page ${currentPage + 1} of ${totalPages}`;
+        }
+
+        function nextPage() {
+            if ((currentPage + 1) * pageSize < questions.length) {
+                currentPage++;
+                renderQuestions();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderQuestions();
+            }
+        }
+
+        renderQuestions();
+    </script>
+
+</body>
+
+</html>
